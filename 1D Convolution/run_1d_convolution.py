@@ -12,8 +12,9 @@ if spec is None or spec.loader is None:
 module = module_from_spec(spec)
 spec.loader.exec_module(module)
 
-input = torch.tensor([1.0, 2.0, 3.0, 4.0], device="cuda")
-output = torch.empty_like(input)
-module.solve(input, output, input.numel())
+input = torch.tensor([1.0, 2.0, 3.0, 4.0, 5.0], device="cuda")
+kernel = torch.tensor([1.0, 0.0, -1.0], device="cuda")
+output = torch.empty(input.numel() - kernel.numel() + 1, device="cuda")
+module.solve(input, kernel, output, input.numel(), kernel.numel())
 torch.cuda.synchronize()
 print(output.cpu().tolist())
